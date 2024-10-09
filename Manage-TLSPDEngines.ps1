@@ -164,12 +164,12 @@ param (
     [pscredential]$Credential,
 
     [Parameter(ParameterSetName="status")]
-    [ValidateSet("VenafiWcfHost",'VenafiLogServer','VenafiESTService','VED')]
-    [string]$Status = ("VenafiWcfHost",'VenafiLogServer','VenafiESTService','VED'),
+    [ValidateSet('VenafiWcfHost','VenafiLogServer','VenafiESTService','VED','All')]
+    [string[]]$Status = 'All',
 
     [Parameter(ParameterSetName="servicerestart")]
-    [ValidateSet("VenafiWcfHost",'VenafiLogServer','VenafiESTService','VED')]
-    [string]$Restart = ("VenafiWcfHost",'VenafiLogServer','VenafiESTService','VED'),
+    [ValidateSet('VenafiWcfHost','VenafiLogServer','VenafiESTService','VED','All')]
+    [string[]]$Restart,
 
     [Parameter(ParameterSetName="iisreset")]
     [switch]$IISReset,
@@ -189,7 +189,6 @@ param (
 
     [Parameter(ParameterSetName="deleteadaptables")]
     [Parameter(ParameterSetName="deleteadaptablesmenu")]
-    
     [Alias("RemoveAdaptable")]
     [ValidateSet("App","Bulk","CA","Credential","Log","SSHIssuanceFlow","SSHManagement","Workflow")]
     [string]$DeleteAdaptable,
@@ -244,7 +243,7 @@ $folders = @{
     'SSHManagement'     = 'Scripts\AdaptableSSHManagement\'
     'Workflow'          = 'Scripts\AdaptableWorkflow\'   
 }
-switch ($PSCmdlet.ParameterSetName) {
+switch -Regex ($PSCmdlet.ParameterSetName) {
     'listadaptables' {
         $AdaptableFolder = $folders.$ListAdaptables
         $AdaptableType = $ListAdaptables
@@ -253,16 +252,22 @@ switch ($PSCmdlet.ParameterSetName) {
         $AdaptableFolder = $folders.$PushAdaptable
         $AdaptableType = $PushAdaptable
     }
-    'deleteadaptables' {
+    'deleteadaptables|deleteadaptablesmenu' {
         $AdaptableFolder = $folders.$DeleteAdaptable
         $AdaptableType = $DeleteAdaptable
+    }
+    'status' {
+        if ($Status -eq 'All'){$Status = @('VenafiWcfHost','VenafiLogServer','VenafiESTService','VED')}
+    }
+    'servicerestart' {
+        if ($Restart -eq 'All'){$Restart = @('VenafiWcfHost','VenafiLogServer','VenafiESTService','VED')}
     }
 }
 
 function Restart-Services {
     Write-Information "Restarting services"
     Invoke-Command -ComputerName $EngineName -Credential $Credential -ScriptBlock {
-        restart-service $Using:Restart-ErrorAction SilentlyContinue -PassThru -WarningAction SilentlyContinue
+        restart-service $Using:Restart -ErrorAction SilentlyContinue -PassThru -WarningAction SilentlyContinue
     }
 }
 
