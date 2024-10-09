@@ -45,21 +45,22 @@ Credentials are stored in a PSCredential object and the password is stored as a 
 
 This user should have right to open an Admin Powershell window if -IISReset is used.
 
-.PARAMETER VenafiServices
-Specifies the Services to get the status of or to restart. 
+.PARAMETER Status
+Specifies the windows TPP services to get the status of on the specified TLSPD Engines.
 
-Defaults to all windows services: 'VenafiWcfHost','VenafiLogServer','VenafiESTService' and 'VED'
+Defaults to all windows services: 'VenafiWcfHost','VenafiLogServer','VenafiESTService', and 'VED'
 
 Any combination of the default services can be chosen.
-
-.PARAMETER Status
-Get the status of all of the windows services or only the specified services on the specified TLSPD Engines
 
 This is the Default action. Running this script with nothing but -EngineName and -Credential is 
 the same as running the script with this switch.
 
 .PARAMETER Restart 
 Restart all of the windows services or only the specified services on the specified TLSPD Engines
+
+Defaults to all windows services: 'VenafiWcfHost','VenafiLogServer','VenafiESTService', and 'VED'
+
+Any combination of the default services can be chosen.
 
 .PARAMETER IISReset
 Reset IIS via an iisreset on the specified TLSPD Engines. 
@@ -69,21 +70,14 @@ The User account used with -Credential should have Administrator rights on the s
 .PARAMETER ListAdaptables
 List Adaptable Scripts (*.ps1 files) of the chosen adaptable type that are currenly on the specified TLSPD Engines. 
 
-Must be used with -AdaptableType to specify the Adaptable folder to look in.
-
 Use -AllFileTypes with this parameter to list all files instead of just Powershell Scripts. 
 
 .PARAMETER AllFileTypes
 List all file types found in the Adaptable folder of the chosen type instead of just *.ps1 files. 
 Use with -ListAdaptables and -DeleteAdatable
 
-Must be used with -AdaptableType to specify the Adaptable folder to look in.
-
 .PARAMETER PushAdaptable
 Push a locally stored Adaptable Driver to the specified TLSPD Engines. 
-
-Must be used with -AdaptableType to specify the Adaptable folder to install into.
-This is the type of adaptable Driver
 
 Can be used with -AdaptableFileLocalPath to provide the file path to the 
 adaptable driver on the local system this script is run on.
@@ -92,22 +86,12 @@ adaptable driver on the local system this script is run on.
 Delete a Adaptable Driver from the specified TLSPD Engines. Run -ListAdaptables to
 determine the names of the Adaptable Driver Files on each engine.
 
-Must be used with -AdaptableType to specify the Adaptable folder to install into
-
 Must be used with -AdaptableFileName to provide the filename of the Adaptable Driver
 to delete on the chosen TLSPD engines. 
 
 .PARAMETER ListFromEngine
 Retrieve a list of adaptables installed on the TLSPD engines and display a menu
 to choose what adaptable to delete. Only one selection allowed. Must pick a number.
-
-
-.PARAMETER AdaptableType
-Specify the type of Adaptable Driver to list, push, or delete from the specified TLSPD Engines.
-Supports "App", "Bulk", "CA", "Credential", "Log", "SSHIssuanceFlow", "SSHManagement", and "Workflow"
-
-Determines what Adaptable folder the -ListAdaptables, -PushAdaptable, and -DeleteAdaptable
-parameters interact with on the chosen TLSPD Engines.
 
 .PARAMETER AdaptableFileLocalPath
 The file path to the Adaptable Driver on the local system to push to the TLSPD Engines. 
@@ -136,7 +120,7 @@ Silences the default Informational output.
 Get the Status of all Venafi services on TLSPD01.corp.net and TLSPD02.corp.net
 
 .EXAMPLE 
-.\Manage-TLSPDEngines.ps1 -EngineName TLSPD01.corp.net,TLSPD02.corp.net -Credential $credential -Restart -VenafiServices "VED","VenafiLogServer"
+.\Manage-TLSPDEngines.ps1 -EngineName TLSPD01.corp.net,TLSPD02.corp.net -Credential $credential -Restart "VED","VenafiLogServer"
 
 Restart the VED (Platform) and Venafi Log Server sevices on TLSPD01.corp.net and TLSPD02.corp.net. 
 
@@ -146,22 +130,22 @@ Restart the VED (Platform) and Venafi Log Server sevices on TLSPD01.corp.net and
 Restart IIS on TLSPD01.corp.net and TLSPD02.corp.net
 
 .EXAMPLE
-.\Manage-TLSPDEngines.ps1 -EngineName TLSPD01.corp.net,TLSPD02.corp.net -Credential $credential -ListAdaptables -AdaptableType CA -AllFileTypes
+.\Manage-TLSPDEngines.ps1 -EngineName TLSPD01.corp.net,TLSPD02.corp.net -Credential $credential -ListAdaptables CA -AllFileTypes
 
 List all Adaptable CAs Drivers installed on TLSPD01.corp.net and TLSPD02.corp.net and any configuration files as well. 
 
 .EXAMPLE
-.\Manage-TLSPDEngines.ps1 -EngineName TLSPD01.corp.net,TLSPD02.corp.net -Credential $credential -DeleteAdaptable -AdaptableType App -ListFromEngine
+.\Manage-TLSPDEngines.ps1 -EngineName TLSPD01.corp.net,TLSPD02.corp.net -Credential $credential -DeleteAdaptable App -ListFromEngine
 
 Delete Adaptable Application Drivers from TLSPD01.corp.net and TLSPD02.corp.net and choose the Driver to delete using a menu
 
 .EXAMPLE
-.\Manage-TLSPDEngines.ps1 -EngineName TLSPD01.corp.net,TLSPD02.corp.net -Credential $credential -DeleteAdaptable -AdaptableType App -AdaptableFileName "CustomAPPDriver.ps1"
+.\Manage-TLSPDEngines.ps1 -EngineName TLSPD01.corp.net,TLSPD02.corp.net -Credential $credential -DeleteAdaptable App -AdaptableFileName "CustomAPPDriver.ps1"
 
 Delete the CustomAPPDriver.ps1 Adaptable Application Driver from TLSPD01.corp.net and TLSPD02.corp.net. 
 
 .EXAMPLE
-.\Manage-TLSPDEngines.ps1 -EngineName TLSPD01.corp.net,TLSPD02.corp.net -Credential $credential -PushAdaptable -AdaptableType Log -AdaptableFileLocalPath "C:\testedDrivers\mylogdriver.ps1"
+.\Manage-TLSPDEngines.ps1 -EngineName TLSPD01.corp.net,TLSPD02.corp.net -Credential $credential -PushAdaptable Log -AdaptableFileLocalPath "C:\testedDrivers\mylogdriver.ps1"
 
 Install the mylogdriver.ps1 Adaptable Log Driver onto TLSPD01.corp.net and TLSPD02.corp.net. 
 If -AdaptableFileLocalPath is not provided, a File picker popup will display.
@@ -179,23 +163,20 @@ param (
     [Parameter(Mandatory = $true)]
     [pscredential]$Credential,
 
-    [Parameter(ParameterSetName="servicerestart")]
     [Parameter(ParameterSetName="status")]
-    [Alias("Services")]
-    [ValidateSet("VenafiWcfHost","VenafiLogServer","VenafiESTService","VED")]
-    [string[]]$VenafiServices = (,'VenafiLogServer','VenafiESTService','VED'),
-
-    [Parameter(ParameterSetName="status")]
-    [switch]$Status,
+    [ValidateSet("VenafiWcfHost",'VenafiLogServer','VenafiESTService','VED')]
+    [string]$Status = ("VenafiWcfHost",'VenafiLogServer','VenafiESTService','VED'),
 
     [Parameter(ParameterSetName="servicerestart")]
-    [switch]$Restart,
+    [ValidateSet("VenafiWcfHost",'VenafiLogServer','VenafiESTService','VED')]
+    [string]$Restart = ("VenafiWcfHost",'VenafiLogServer','VenafiESTService','VED'),
 
     [Parameter(ParameterSetName="iisreset")]
     [switch]$IISReset,
 
     [Parameter(ParameterSetName="listadaptables")]
-    [switch]$ListAdaptables,
+    [ValidateSet("App","Bulk","CA","Credential","Log","SSHIssuanceFlow","SSHManagement","Workflow")]
+    [string]$ListAdaptables,
 
     [Parameter(ParameterSetName="listadaptables")]
     [Parameter(ParameterSetName="deleteadaptablesmenu")]
@@ -203,23 +184,18 @@ param (
 
     [Parameter(ParameterSetName="pushadaptables")]
     [Alias("InstallAdaptable")]
-    [switch]$PushAdaptable,
+    [ValidateSet("App","Bulk","CA","Credential","Log","SSHIssuanceFlow","SSHManagement","Workflow")]
+    [string]$PushAdaptable,
 
     [Parameter(ParameterSetName="deleteadaptables")]
     [Parameter(ParameterSetName="deleteadaptablesmenu")]
+    
     [Alias("RemoveAdaptable")]
-    [switch]$DeleteAdaptable,
+    [ValidateSet("App","Bulk","CA","Credential","Log","SSHIssuanceFlow","SSHManagement","Workflow")]
+    [string]$DeleteAdaptable,
 
     [Parameter(ParameterSetName="deleteadaptablesmenu")]
     [switch]$ListFromEngine,
-
-    [Parameter(Mandatory = $true, ParameterSetName="pushadaptables")]
-    [Parameter(Mandatory = $true, ParameterSetName="listadaptables")]
-    [Parameter(Mandatory = $true, ParameterSetName="deleteadaptables")]
-    [Parameter(Mandatory = $true, ParameterSetName="deleteadaptablesmenu")]
-    [Alias("Type")]
-    [ValidateSet("App","Bulk","CA","Credential","Log","SSHIssuanceFlow","SSHManagement","Workflow")]
-    [string]$AdaptableType,
 
     [Parameter(Mandatory = $false, ParameterSetName="pushadaptables")]
     [Alias("FilePath")]
@@ -228,7 +204,7 @@ param (
             throw "File or folder does not exist"
         }
         if(-Not ($_ | Test-Path -PathType Leaf) ){
-            throw "The Path argument must be a file. Folder paths are not allowed."
+            throw "The FilePath argument must be a file. Folder paths are not allowed."
         }
         return $true 
     })]
@@ -258,26 +234,38 @@ if (-not $Quiet) {
     $InformationPreference = 'continue'
 }
 
-if ($PSBoundParameters.ContainsKey('AdaptableType')) {
-    switch ($AdaptableType) {
-        'App'               { $AdaptableFolder = 'Scripts\AdaptableApp\' }
-        'Bulk'              { $AdaptableFolder = 'Scripts\AdaptableBulk\'}
-        'CA'                { $AdaptableFolder = 'Scripts\AdaptableCA\'}
-        'Credential'        { $AdaptableFolder = 'Scripts\AdaptableCredential\'}
-        'Log'               { $AdaptableFolder = 'Scripts\AdaptableLog\'}
-        'SSHIssuanceFlow'   { $AdaptableFolder = 'Scripts\AdaptableSSHCertificateIssuanceFlow\'}
-        'SSHManagement'     { $AdaptableFolder = 'Scripts\AdaptableSSHManagement\'}
-        'Workflow'          { $AdaptableFolder = 'Scripts\AdaptableWorkflow\'}
-        
+$folders = @{
+    'App'               = 'Scripts\AdaptableApp\'
+    'Bulk'              = 'Scripts\AdaptableBulk\'
+    'CA'                = 'Scripts\AdaptableCA\'
+    'Credential'        = 'Scripts\AdaptableCredential\'
+    'Log'               = 'Scripts\AdaptableLog\'
+    'SSHIssuanceFlow'   = 'Scripts\AdaptableSSHCertificateIssuanceFlow\'
+    'SSHManagement'     = 'Scripts\AdaptableSSHManagement\'
+    'Workflow'          = 'Scripts\AdaptableWorkflow\'   
+}
+switch ($PSCmdlet.ParameterSetName) {
+    'listadaptables' {
+        $AdaptableFolder = $folders.$ListAdaptables
+        $AdaptableType = $ListAdaptables
+    }
+    'pushadaptables' {
+        $AdaptableFolder = $folders.$PushAdaptable
+        $AdaptableType = $PushAdaptable
+    }
+    'deleteadaptables' {
+        $AdaptableFolder = $folders.$DeleteAdaptable
+        $AdaptableType = $DeleteAdaptable
     }
 }
 
 function Restart-Services {
     Write-Information "Restarting services"
     Invoke-Command -ComputerName $EngineName -Credential $Credential -ScriptBlock {
-        restart-service $Using:VenafiServices -ErrorAction SilentlyContinue -PassThru -WarningAction SilentlyContinue
+        restart-service $Using:Restart-ErrorAction SilentlyContinue -PassThru -WarningAction SilentlyContinue
     }
 }
+
 function Restart-IIS {
     Write-Information "Resetting IIS"
     $Result = Invoke-Command -ComputerName $EngineName -Credential $Credential -ScriptBlock { [pscustomobject]@{ iisresult = iisreset; ResetSucessful = $?}}
@@ -368,8 +356,9 @@ function Get-InstalledAdapables {
 # begin fun
 switch -Regex ($PsCmdlet.ParameterSetName) {
     'status' {
-        Write-Information "Gathering status of requested services"
-        $Result = Invoke-Command -ComputerName $EngineName -Credential $Credential -ScriptBlock {get-service $Using:VenafiServices -ErrorAction SilentlyContinue}
+        Write-Information "Status of services requested on the following TLSPD Engines:`n - $($engineName -join "`n - ") `n"
+        Write-Information "Status requested for following services:`n - $($Status -join "`n - ")"
+        $Result = Invoke-Command -ComputerName $EngineName -Credential $Credential -ScriptBlock {get-service $Using:Status -ErrorAction SilentlyContinue}
         $Result |  ForEach-Object {
             [pscustomobject]@{
                 Computername = $_.PSComputerName
@@ -380,8 +369,8 @@ switch -Regex ($PsCmdlet.ParameterSetName) {
     }
     'servicerestart' {
         if ( -not $Confirm){
-            Write-Warning "Restart of services requested on the Following TLSPD Engines: `n - $($engineName -join "`n - ") `n"
-            Write-Warning "Services requested to Restart:`n - $($VenafiServices -join "`n - ")"
+            Write-Warning "Restart of services requested on the following TLSPD Engines:`n - $($engineName -join "`n - ") `n"
+            Write-Warning "Services requested to Restart:`n - $($Restart -join "`n - ")"
             switch -Regex (Read-Host -Prompt "Are you sure you would like to restart the above services on the above engines (Y/N)") {
                 'Y|Yes|y|yes|YES' {
                     Restart-Services
@@ -399,7 +388,7 @@ switch -Regex ($PsCmdlet.ParameterSetName) {
                 'Y|Yes|y|yes' { Restart-IIS }
                 default { Write-Output "iisreset cancelled" }
             }
-        } else {
+        } else {q
             Restart-IIS
         }
        
