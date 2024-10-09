@@ -207,7 +207,7 @@ param (
         }
         return $true 
     })]
-    [string]$AdaptableFileLocalPath,
+    [string[]]$AdaptableFileLocalPath,
 
     [Parameter(Mandatory = $true, ParameterSetName="deleteadaptables")]
     [ValidateScript({
