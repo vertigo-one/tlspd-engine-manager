@@ -2,19 +2,19 @@
 
 .VERSION 1.0
 
-.GUID 3bb10ee7-38c1-41b9-88ea-16899164fc19
+.GUID dcc838ad-2fae-4754-b243-c8986f54fb59
 
 .AUTHOR Vertigo-One
 
 .COMPANYNAME
 
-.COPYRIGHT 2024 Vertigo One
+.COPYRIGHT 2024 Vertigo One. MIT Lisence
 
 .TAGS
 
-.LICENSEURI
+.LICENSEURI "https://github.com/vertigo-one/tlspd-engine-manager/blob/1.0/LICENSE"
 
-.PROJECTURI
+.PROJECTURI "https://github.com/vertigo-one/tlspd-engine-manager"
 
 .ICONURI
 
