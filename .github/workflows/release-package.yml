@@ -1,0 +1,14 @@
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-release:
+    runs-on: windows-latest
+    steps:
+      - name: Publish Powershell Script
+        uses: vertigo-one/publish-powershell-action@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target: packages
+          path: src
