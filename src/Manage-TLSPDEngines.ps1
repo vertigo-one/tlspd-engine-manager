@@ -8,13 +8,13 @@
 
 .COMPANYNAME
 
-.COPYRIGHT 2024 Vertigo One. MIT Lisence
+.COPYRIGHT 2024 Vertigo-One. MIT Lisence
 
 .TAGS
 
-.LICENSEURI "https://github.com/vertigo-one/tlspd-engine-manager/blob/1.0/LICENSE"
+.LICENSEURI https://github.com/vertigo-one/tlspd-engine-manager/blob/1.0/LICENSE
 
-.PROJECTURI "https://github.com/vertigo-one/tlspd-engine-manager"
+.PROJECTURI https://github.com/vertigo-one/tlspd-engine-manager
 
 .ICONURI
 
@@ -59,7 +59,7 @@ Adaptable Management (all Types)
 
 .PARAMETER EngineName
 Specifies an array of names of Servers hosting TLSPD engines to perform actions on. 
-Type the NetBIOS name, an IP address, or a fully qualified domain name of one or more remote computers.
+Type the NetBIOS name if resolveable, an IP address, or a fully qualified domain name (recommended) of one or more remote computers.
 
 NOTE: Ability to use NetBIOS, IP, or FQDN will depend on your environment.
 Examples:
@@ -80,61 +80,76 @@ This user should have right to open an Admin Powershell window if -IISReset is u
 .PARAMETER Status
 Specifies the windows TPP services to get the status of on the specified TLSPD Engines.
 
-Defaults to all windows services: 'VenafiWcfHost','VenafiLogServer','VenafiESTService', and 'VED'
+Any combination of the below services can be chosen from the below list or 'All' can be provided to target all services:
+'VenafiWcfHost','VenafiLogServer','VenafiESTService', and 'VED'
 
-Any combination of the default services can be chosen.
+Any combination of the above services can be chosen. Passing All will ALWAYS result in targeting all TLSPD services
 
-This is the Default action. Running this script with nothing but -EngineName and -Credential is 
-the same as running the script with this switch.
+This is the Default action for the script. Running this script with nothing but -EngineName and -Credential is 
+the same as running the script with "-status 'All'"
 
 .PARAMETER Restart 
 Restart all of the windows services or only the specified services on the specified TLSPD Engines
 
-Defaults to all windows services: 'VenafiWcfHost','VenafiLogServer','VenafiESTService', and 'VED'
+Any combination of the below services can be chosen from the below list or 'All' can be provided to target all services:
+'VenafiWcfHost','VenafiLogServer','VenafiESTService', and 'VED'
 
-Any combination of the default services can be chosen.
+Any combination of the above services can be chosen. Passing All will ALWAYS result in targeting all TLSPD services
 
 .PARAMETER IISReset
 Reset IIS via an iisreset on the specified TLSPD Engines. 
 
-The User account used with -Credential should have Administrator rights on the servers. 
+The user account used with -Credential should have Administrator rights on the servers to use this feature.
 
 .PARAMETER ListAdaptables
-List Adaptable Scripts (*.ps1 files) of the chosen adaptable type that are currenly on the specified TLSPD Engines. 
+List Adaptable Scripts (*.ps1 files) of the chosen adaptable type that are currently on the specified TLSPD Engines. 
+Provide one of the below values to choose what Adaptable folder to list the Adaptable Drivers in:
+"App","Bulk","CA","Credential","Log","SSHIssuanceFlow","SSHManagement", or "Workflow"
 
-Use -AllFileTypes with this parameter to list all files instead of just Powershell Scripts. 
-
-.PARAMETER AllFileTypes
-List all file types found in the Adaptable folder of the chosen type instead of just *.ps1 files. 
-Use with -ListAdaptables and -DeleteAdatable
+Use -AllFileTypes with this parameter to list all files instead of just Powershell Scripts. This
+is useful if there are .json, .yaml, or .txt configuration files for an adpatable driver. 
 
 .PARAMETER PushAdaptable
 Push a locally stored Adaptable Driver to the specified TLSPD Engines. 
+Provide one of the below values to choose what Adaptable folder to push to:
+"App","Bulk","CA","Credential","Log","SSHIssuanceFlow","SSHManagement","Workflow"
 
 Can be used with -AdaptableFileLocalPath to provide the file path to the 
 adaptable driver on the local system this script is run on.
 
+.PARAMETER AdaptableFileLocalPath
+The file path to the Adaptable Driver on the local system to push to the TLSPD Engines. 
+Multiple filepaths can be provided by passing an array of valid file paths. 
+
+If this is not provided then a windows file picker GUI will be lauched so the user can pick the file. 
+
 .PARAMETER DeleteAdaptable
 Delete a Adaptable Driver from the specified TLSPD Engines. Run -ListAdaptables to
 determine the names of the Adaptable Driver Files on each engine.
+Provide one of the below values to choose what Adaptable folder to delete from:
+"App","Bulk","CA","Credential","Log","SSHIssuanceFlow","SSHManagement",or "Workflow"
 
 Must be used with -AdaptableFileName to provide the filename of the Adaptable Driver
 to delete on the chosen TLSPD engines. 
-
-.PARAMETER ListFromEngine
-Retrieve a list of adaptables installed on the TLSPD engines and display a menu
-to choose what adaptable to delete. Only one selection allowed. Must pick a number.
-
-.PARAMETER AdaptableFileLocalPath
-The file path to the Adaptable Driver on the local system to push to the TLSPD Engines. 
-
-If this is not provided then a windows file picker GUI will be lauched so the user can pick the file. 
 
 .PARAMETER AdaptableFileName
 The filename + extension of the Adaptable Driver to delete from the specified TLSPD Engines.
 ex) myAdaptableDriver.ps1
 
-Run -ListAdaptables to determine the correct values for this parameter.
+Run -ListAdaptables to determine the correct value for this parameter.
+
+.PARAMETER ListFromEngine
+Retrieve a list of adaptables installed on the TLSPD engines and display a menu
+to choose what adaptable to delete. Only one selection allowed. Must pick a number.
+
+Use -AllFileTypes with this parameter to list all files in the menu instead of just Powershell Scripts. This
+is useful if there are .json, .yaml, or .txt configuration files for an adpatable driver. 
+
+.PARAMETER AllFileTypes
+List *All* file types found in the Adaptable folder of the chosen type instead of just *.ps1 files. 
+This is useful if there are .json, .yaml, or .txt configuration files for an adpatable driver. 
+
+Useable with -ListAdaptables, and with -DeleteAdatable if -ListFromEngine is also provided. 
 
 .PARAMETER Confirm
 Risk of use for production systems: High
@@ -289,10 +304,10 @@ switch -Regex ($PSCmdlet.ParameterSetName) {
         $AdaptableType = $DeleteAdaptable
     }
     'status' {
-        if ($Status -eq 'All'){$Status = @('VenafiWcfHost','VenafiLogServer','VenafiESTService','VED')}
+        if ($Status -Contains 'All'){$Status = @('VenafiWcfHost','VenafiLogServer','VenafiESTService','VED')}
     }
     'servicerestart' {
-        if ($Restart -eq 'All'){$Restart = @('VenafiWcfHost','VenafiLogServer','VenafiESTService','VED')}
+        if ($Restart -Contains 'All'){$Restart = @('VenafiWcfHost','VenafiLogServer','VenafiESTService','VED')}
     }
 }
 
