@@ -11,8 +11,6 @@ Comment based help has been implemented so `Get-Help Manage-TLSPDEngines`, or `G
 - A user credential with rights to restart Venafi services and manipulate files in the Venafi installation directory.
 
 ## Installation
-You can either install from my github nuget package repository (recommended for any updates) or just download the lastest release and install it in your PS Scripts directory. 
-
 Download the release at https://github.com/vertigo-one/tlspd-engine-manager/releases/latest and place the `Manage-TLSPDEngines.ps1` file in the directory that is the output of `"$(split-path $profile)\Scripts"`
 
 ## Features
