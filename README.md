@@ -13,20 +13,6 @@ Comment based help has been implemented so `Get-Help Manage-TLSPDEngines`, or `G
 ## Installation
 You can either install from my github nuget package repository (recommended for any updates) or just download the lastest release and install it in your PS Scripts directory. 
 
-### install from package repository (recommended)
-This script is published to my github nugetv3 package repository as a public package. As a result the [Microsoft.PowerShell.PSResourceGet](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.psresourceget) module is needed if you wish to install from this repository. 
-
-
-```powershell
-# Register vertigo-one github nuget repo as a PS Repository 
-# https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.psresourceget/register-psresourcerepository?view=powershellget-3.x
-Register-PSResourceRepository -Name Vertigo-one-github 'https://nuget.pkg.github.com/vertigo-one/index.json'
-
-# Install script
-Install-PSResource Manage-TLSPDEngines
-```
-
-# Install via manually downloading
 Download the release at https://github.com/vertigo-one/tlspd-engine-manager/releases/latest and place the `Manage-TLSPDEngines.ps1` file in the directory that is the output of `"$(split-path $profile)\Scripts"`
 
 ## Features
@@ -41,11 +27,11 @@ Download the release at https://github.com/vertigo-one/tlspd-engine-manager/rele
   - Authentication must be done by a user who has permissions to do this (Administrator rights most likely). 
 - Adaptable Management (All types supported.)
   - Copy adpatable driver from local machine to correct engine folder for adaptable type on each specified engines. 
-    - Programatic passing of the filepath to the file on the local system or GUI file picker are supported.
+    - Programmatic passing of the filepath to the file on the local system or GUI file picker are supported.
   - List adaptable driver of chosen type on each specified engine. 
     - Defaults to *.ps1 files only but all files in folder supported via the `-AllFileTypes` parameter
   - Delete adaptable driver of chosen type on each specified engine.
-    - Programatic passing of the file name via `-AdaptableFileName` or choosing from a menu of files retrieved from the servers is supported.
+    - Programmatic passing of the file name via `-AdaptableFileName` or choosing from a menu of files retrieved from the servers is supported.
 - All interactions that make changes to TLSPD engines will prompt for user comfirmation and display the changes requested. 
   - This will occur unless the `-confirm` switch is provided. **Be careful with this**. 
 - Silencing of the informational output is possible with `-Quiet`
